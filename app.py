@@ -1,10 +1,15 @@
 
+import os
 import joblib
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
 import imblearn  # REQUIRED for model loading
 
 app = Flask(__name__)
+
+# Production configuration
+app.config['ENV'] = os.environ.get('FLASK_ENV', 'production')
+app.config['DEBUG'] = False
 
 
 def _patch_simple_imputer_fill_dtype(pipeline):
@@ -72,5 +77,6 @@ def predict():
         "probability": round(probability * 100, 2)
     })
 
-if __name__ ==  "__main__":
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
